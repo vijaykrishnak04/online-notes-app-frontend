@@ -12,19 +12,19 @@ const UserVerification: React.FC<UserVerificationProps> = ({ children }) => {
 
   if (userToken) {
     // If the userToken exists, allow access to /* routes except /login
-    if (location.pathname !== "/login") {
+    if (location.pathname !== "/") {
       return <>{children}</>;
     } else {
       // Redirect the admin to the dashboard if they try to access /login while authenticated.
-      return <Navigate to="/" replace />;
+      return <Navigate to="/notes" replace />;
     }
   } else {
     // If no adminToken, allow access only to /login
-    if (location.pathname === "/login" ) {
+    if (location.pathname === "/" ) {
       return <>{children}</>;
     } else {
       // Redirect to /login if the user tries to access other routes without authentication.
-      return <Navigate to="/login" replace />;
+      return <Navigate to="/" replace />;
     }
   }
 };

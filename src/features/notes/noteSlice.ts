@@ -69,11 +69,16 @@ export const updateNote = createAsyncThunk<Note, Note>(
 
 export const deleteNote = createAsyncThunk<string, string>(
   "notes/deleteNote",
-  async (noteId: string) => {
-    await noteRepository.delete(noteId);
-    return noteId;
+  async (noteId, { rejectWithValue }) => {
+    try {
+      await noteRepository.delete(noteId);
+      return noteId;
+    } catch (error) {
+      return rejectWithValue(error);
+    }
   }
 );
+
 
 // Slice
 const noteSlice = createSlice({
@@ -92,8 +97,8 @@ const noteSlice = createSlice({
       .addCase(
         fetchNotes.fulfilled,
         (state, action: PayloadAction<Note[] | null>) => {
-          state.status = "succeeded";
           if (action.payload !== null) {
+            state.status = "succeeded";
             state.notes = action.payload;
           }
         }

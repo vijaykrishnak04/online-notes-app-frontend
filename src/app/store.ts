@@ -1,18 +1,18 @@
-import { configureStore } from '@reduxjs/toolkit';
-import { persistStore, persistReducer } from 'redux-persist';
-import storage from 'redux-persist/lib/storage';
-import noteReducer from '../features/notes/noteSlice'; // Adjust the import path as necessary
-import userReducer from '../features/users/userSlice'; // Adjust the import path as necessary
+import { configureStore } from "@reduxjs/toolkit";
+import { persistStore, persistReducer } from "redux-persist";
+import storage from "redux-persist/lib/storage";
+import noteReducer from "../features/notes/noteSlice"; // Adjust the import path as necessary
+import userReducer from "../features/users/userSlice"; // Adjust the import path as necessary
 
 // Define the persistence configurations for the notes and users slices
 const notesPersistConfig = {
-    key: 'notes',
-    storage,
+  key: "notes",
+  storage,
 };
 
 const usersPersistConfig = {
-    key: 'users',
-    storage,
+  key: "users",
+  storage,
 };
 
 // Use `persistReducer` with the configurations and the corresponding reducers
@@ -25,6 +25,15 @@ export const store = configureStore({
     users: persistedUserReducer, // Persisted users slice
     // ...add other reducers if necessary
   },
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: {
+        // Ignore these action types
+        ignoredActions: ["persist/PERSIST", "persist/REHYDRATE"],
+        // Or ignore these paths in the state
+        ignoredPaths: ["some.nonSerializable.path"],
+      },
+    }),
 });
 
 export const persistor = persistStore(store);
