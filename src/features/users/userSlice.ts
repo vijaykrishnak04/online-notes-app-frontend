@@ -6,7 +6,7 @@ import {
   UserRegistration,
   AuthToken,
 } from "../../core/interfaces/IUserRepository";
-import { UserRepository } from "../../adapters/repositories/UserRepository"; // Adjust the import paths as necessary
+import { UserRepository } from "../../adapters/repositories/UserRepository";
 
 // Define the initial state of the user slice
 interface UserState {
@@ -33,10 +33,9 @@ export const login = createAsyncThunk(
       const response = await userRepository.login(credentials);
       // Optionally, store the token in localStorage or a cookie here
       return response;
-    } catch (err) {
-      return rejectWithValue(
-        "Login failed. Please check your username and password."
-      );
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (err: any) {
+      return rejectWithValue(err.message);
     }
   }
 );
@@ -58,7 +57,7 @@ const userSlice = createSlice({
   initialState,
   reducers: {
     logout() {
-      localStorage.removeItem("userToken")
+      localStorage.removeItem("userToken");
       return initialState;
     },
   },
@@ -70,8 +69,6 @@ const userSlice = createSlice({
       .addCase(login.fulfilled, (state, action: PayloadAction<AuthToken>) => {
         state.status = "succeeded";
         // Destructure the payload to get the token and user details
-        console.log(action.payload);
-        
         const { token, email, userId, username } = action.payload;
         state.token = token;
         // Set the user details in state.user
@@ -84,6 +81,7 @@ const userSlice = createSlice({
       })
       .addCase(login.rejected, (state, action) => {
         state.status = "failed";
+        
         state.error = action.payload as string;
       })
       .addCase(register.pending, (state) => {

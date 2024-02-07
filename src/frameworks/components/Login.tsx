@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { login } from '../../features/users/userSlice';
-import { useDispatch } from 'react-redux';
-import { AppDispatch } from '../../app/store';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch, RootState } from '../../app/store';
 
 const Login = () => {
   const [credentials, setCredentials] = useState({ email: '', password: '' });
-  const [error, setError] = useState('');
+  const [error, setError] = useState(useSelector((state: RootState) => state.users.error) || '');
+  // const status = useSelector((state: RootState) => state.users.status);
+
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
 
@@ -21,12 +23,16 @@ const Login = () => {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     try {
-      const actionResult = await dispatch(login(credentials));
-      const userToken = actionResult.payload as { token: string };
-      if (userToken) {
-        localStorage.setItem('userToken', userToken.token);
-        navigate('/notes'); // Redirect to homepage or dashboard after successful login
-      }
+      dispatch(login(credentials)).then((responseAction) => {
+        if (login.fulfilled.match(responseAction)) {
+          const jwtToken = responseAction.payload.token;
+          localStorage.setItem("userToken", jwtToken);
+          navigate("/notes");
+        } else {
+          setError('Login failed. Please check your internet connection.')
+        }
+      })
+
     } catch (err) {
       setError('Login failed. Please check your email and password.');
     }
