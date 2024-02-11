@@ -111,6 +111,7 @@ const noteSlice = createSlice({
       )
       .addCase(saveNote.fulfilled, (state, action: PayloadAction<Note>) => {
         state.notes.push(action.payload);
+        state.currentNote = action.payload
       })
       .addCase(updateNote.fulfilled, (state, action: PayloadAction<Note>) => {
         const index = state.notes.findIndex(
@@ -119,6 +120,7 @@ const noteSlice = createSlice({
         if (index !== -1) {
           state.notes[index] = action.payload;
         }
+        state.currentNote = action.payload
       })
       .addCase(deleteNote.fulfilled, (state, action: PayloadAction<string>) => {
         state.notes = state.notes.filter((note) => note._id !== action.payload);

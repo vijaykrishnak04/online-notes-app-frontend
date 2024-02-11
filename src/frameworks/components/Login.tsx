@@ -29,7 +29,7 @@ const Login = () => {
           localStorage.setItem("userToken", jwtToken);
           navigate("/notes");
         } else {
-          setError('Login failed. Please check your internet connection.')
+          setError("Invalid username or password")
         }
       })
 

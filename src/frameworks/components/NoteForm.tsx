@@ -77,7 +77,7 @@ const NoteForm = () => {
       dispatch(saveNote(newNote));
     }
 
-    navigate('/'); // Redirect to the notes list after saving
+    navigate(`/notes/edit/${noteId}`); // Redirect to the notes list after saving
   };
 
   return (

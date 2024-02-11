@@ -35,7 +35,9 @@ export const login = createAsyncThunk(
       return response;
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
-      return rejectWithValue(err.message);
+      console.log(err.response.data.message);
+      
+      return rejectWithValue(err.response.data.message);
     }
   }
 );
@@ -79,9 +81,8 @@ const userSlice = createSlice({
           // Add any other user details you receive and want to store
         };
       })
-      .addCase(login.rejected, (state, action) => {
+      .addCase(login.rejected, (state, action) => { 
         state.status = "failed";
-        
         state.error = action.payload as string;
       })
       .addCase(register.pending, (state) => {
